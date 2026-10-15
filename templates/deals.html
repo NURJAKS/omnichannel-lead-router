@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>💼 Сделки</h1>
+
+<div style="margin: 20px 0;">
+    <a href="/deals" class="btn {% if not current_status %}btn-success{% endif %}">Все</a>
+    <a href="/deals?status=new" class="btn {% if current_status == 'new' %}btn-success{% endif %}">Новые</a>
+    <a href="/deals?status=in_progress" class="btn {% if current_status == 'in_progress' %}btn-success{% endif %}">В работе</a>
+    <a href="/deals?status=won" class="btn {% if current_status == 'won' %}btn-success{% endif %}">Выиграны</a>
+    <a href="/deals?status=lost" class="btn {% if current_status == 'lost' %}btn-success{% endif %}">Проиграны</a>
+</div>
+
+{% if deals %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Клиент</th>
+            <th>Сумма</th>
+            <th>Статус</th>
+            <th>Создана</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for deal in deals %}
+        <tr>
+            <td>{{ deal.id }}</td>
+            <td>{{ deal.title }}</td>
+            <td>
+                {% if deal.client %}
+                <a href="/clients/{{ deal.client.id }}">{{ deal.client.name }}</a>
+                {% else %}
+                ID: {{ deal.client_id }}
+                {% endif %}
+            </td>
+            <td>{{ "%.0f"|format(deal.amount) }} ₽</td>
+            <td><span class="badge badge-{{ deal.status }}">{{ deal.status }}</span></td>
+            <td>{{ deal.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Сделок пока нет.</p>
+{% endif %}
+{% endblock %}
+

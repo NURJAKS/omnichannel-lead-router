@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>📊 Статистика</h1>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Всего клиентов</h3>
+        <div class="value">{{ stats.total_clients }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Всего сделок</h3>
+        <div class="value">{{ stats.total_deals }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Общая сумма</h3>
+        <div class="value">{{ "%.0f"|format(stats.total_amount) }} ₽</div>
+    </div>
+    <div class="stat-card">
+        <h3>Активных задач</h3>
+        <div class="value">{{ stats.pending_tasks }}</div>
+    </div>
+</div>
+
+{% if stats.deals_by_status %}
+<h2 style="margin-top: 30px;">Сделки по статусам</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Статус</th>
+            <th>Количество</th>
+            <th>Сумма</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for status, data in stats.deals_by_status.items() %}
+        <tr>
+            <td><span class="badge badge-{{ status }}">{{ status }}</span></td>
+            <td>{{ data.count }}</td>
+            <td>{{ "%.0f"|format(data.total) }} ₽</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
+

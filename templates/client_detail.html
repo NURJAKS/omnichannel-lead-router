@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>👤 {{ client.name }}</h1>
+
+<div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+    <h2>Информация о клиенте</h2>
+    <p><strong>ID:</strong> {{ client.id }}</p>
+    {% if client.phone %}
+    <p><strong>Телефон:</strong> {{ client.phone }}</p>
+    {% endif %}
+    {% if client.email %}
+    <p><strong>Email:</strong> {{ client.email }}</p>
+    {% endif %}
+    {% if client.company %}
+    <p><strong>Компания:</strong> {{ client.company }}</p>
+    {% endif %}
+    {% if client.notes %}
+    <p><strong>Заметки:</strong> {{ client.notes }}</p>
+    {% endif %}
+    <p><strong>Создан:</strong> {{ client.created_at }}</p>
+</div>
+
+<div style="margin: 20px 0;">
+    <button onclick="document.getElementById('addDealForm').style.display='block'" class="btn btn-success">
+        ➕ Добавить сделку
+    </button>
+</div>
+
+<div id="addDealForm" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+    <h3>Добавить сделку для {{ client.name }}</h3>
+    <form method="POST" action="/deals/add">
+        <input type="hidden" name="client_id" value="{{ client.id }}">
+        <div class="form-group">
+            <label>Название сделки *</label>
+            <input type="text" name="title" required>
+        </div>
+        <div class="form-group">
+            <label>Сумма</label>
+            <input type="number" name="amount" step="0.01" value="0">
+        </div>
+        <div class="form-group">
+            <label>Статус</label>
+            <select name="status">
+                <option value="new">Новая</option>
+                <option value="in_progress">В работе</option>
+                <option value="won">Выиграна</option>
+                <option value="lost">Проиграна</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Описание</label>
+            <textarea name="description" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Сохранить</button>
+        <button type="button" onclick="document.getElementById('addDealForm').style.display='none'" class="btn">Отмена</button>
+    </form>
+</div>
+
+<h2>Сделки клиента</h2>
+{% if deals %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Сумма</th>
+            <th>Статус</th>
+            <th>Создана</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for deal in deals %}
+        <tr>
+            <td>{{ deal.id }}</td>
+            <td>{{ deal.title }}</td>
+            <td>{{ "%.0f"|format(deal.amount) }} ₽</td>
+            <td><span class="badge badge-{{ deal.status }}">{{ deal.status }}</span></td>
+            <td>{{ deal.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>У этого клиента пока нет сделок.</p>
+{% endif %}
+
+<a href="/clients" class="btn" style="margin-top: 20px;">← Назад к списку</a>
+{% endblock %}
+

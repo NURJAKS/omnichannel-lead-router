@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>📋 Задачи</h1>
+
+<div style="margin: 20px 0;">
+    <button onclick="document.getElementById('addForm').style.display='block'" class="btn btn-success">
+        ➕ Добавить задачу
+    </button>
+</div>
+
+<div id="addForm" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+    <h3>Добавить новую задачу</h3>
+    <form method="POST" action="/tasks/add">
+        <div class="form-group">
+            <label>Название *</label>
+            <input type="text" name="title" required>
+        </div>
+        <div class="form-group">
+            <label>Описание</label>
+            <textarea name="description" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Дедлайн</label>
+            <input type="datetime-local" name="due_date">
+        </div>
+        <button type="submit" class="btn btn-success">Сохранить</button>
+        <button type="button" onclick="document.getElementById('addForm').style.display='none'" class="btn">Отмена</button>
+    </form>
+</div>
+
+<div style="margin: 20px 0;">
+    <a href="/tasks" class="btn {% if not current_status %}btn-success{% endif %}">Все</a>
+    <a href="/tasks?status=pending" class="btn {% if current_status == 'pending' %}btn-success{% endif %}">Активные</a>
+    <a href="/tasks?status=completed" class="btn {% if current_status == 'completed' %}btn-success{% endif %}">Выполнены</a>
+</div>
+
+{% if tasks %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Дедлайн</th>
+            <th>Статус</th>
+            <th>Создана</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.id }}</td>
+            <td>{{ task.title }}</td>
+            <td>{{ task.description or '-' }}</td>
+            <td>{{ task.due_date or '-' }}</td>
+            <td><span class="badge badge-{{ task.status }}">{{ task.status }}</span></td>
+            <td>{{ task.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Задач пока нет.</p>
+{% endif %}
+{% endblock %}
+
